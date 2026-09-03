@@ -34,9 +34,9 @@ async def root():
 async def get_classes():
     # Placeholder for database retrieval
     return [
-        {"id": "bio-10", "name": "Grade 10 Biology", "gradeLevel": "Grade 10", "subject": "Biology", "studentsCount": 25, "level": "Intermediate", "notes": "Focus on foundational concepts."},
-        {"id": "chem-8", "name": "Grade 8 Chemistry", "gradeLevel": "Grade 8", "subject": "Chemistry", "studentsCount": 28, "level": "Beginner", "notes": "Introduction to matter."},
-        {"id": "phys-12", "name": "Grade 12 Physics", "gradeLevel": "Grade 12", "subject": "Physics", "studentsCount": 22, "level": "Advanced", "notes": "Numerical problem solving."}
+        {"id": "os-10", "name": "II AI&DS - B (OS)", "gradeLevel": "UG - 2nd Year", "subject": "Operating Systems", "studentsCount": 25, "level": "Intermediate", "notes": "Understanding process management."},
+        {"id": "aia-8", "name": "III AI&DS - A (AIA)", "gradeLevel": "UG - 3rd Year", "subject": "AI & Applications", "studentsCount": 28, "level": "Beginner", "notes": "Introduction to AI."},
+        {"id": "rdbms-12", "name": "II CSE - B (RDBMS)", "gradeLevel": "UG - 2nd Year", "subject": "Relational Database Management Systems", "studentsCount": 22, "level": "Advanced", "notes": "Database design and implementation."}
     ]
 
 @app.get("/api/config")

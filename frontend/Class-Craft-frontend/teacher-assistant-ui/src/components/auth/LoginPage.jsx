@@ -26,6 +26,7 @@ import { useMsal } from '@azure/msal-react';
 export default function LoginPage() {
   const login = useLessonStore((state) => state.login);
   const setUserNameInStore = useLessonStore((state) => state.setUserName);
+  const setTeacherPreferences = useLessonStore((state) => state.setTeacherPreferences);
   const { instance: msalInstance } = useMsal();
 
   // 1. Auth View State: 'login' | 'forgot_email' | 'forgot_otp' | 'forgot_reset' | 'signup' | 'signup_profile'
@@ -188,6 +189,15 @@ export default function LoginPage() {
         password: signupPassword,
       });
       if (setUserNameInStore) setUserNameInStore(data.user.name);
+      if (setTeacherPreferences) {
+        setTeacherPreferences({
+          teaching_depth: teachingDepth,
+          explanation_style: explanationStyle,
+          student_readiness: studentReadiness,
+          assessment_difficulty: assessmentDifficulty,
+          include_misconceptions: includes.misconceptions
+        });
+      }
       login(data.user);
     } catch (error) {
       alert('Signup Failed: ' + error.message);

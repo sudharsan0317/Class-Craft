@@ -1,6 +1,13 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Any, Dict
 
+class TeacherPreferences(BaseModel):
+    teaching_depth: Optional[str] = "Standard"
+    explanation_style: Optional[str] = "Balanced"
+    student_readiness: Optional[str] = "At Grade Level"
+    assessment_difficulty: Optional[str] = "Moderate"
+    include_misconceptions: Optional[bool] = False
+
 class GenerateRequest(BaseModel):
     subject: str = Field(..., description="Subject area (e.g. Biology, Chemistry)")
     gradeLevel: Optional[str] = Field(default="Grade 10", description="Target grade level")
@@ -9,6 +16,7 @@ class GenerateRequest(BaseModel):
     sourceMaterial: Optional[str] = Field(default=None, description="Optional text source material")
     fileName: Optional[str] = Field(default=None, description="Optional attached document name")
     classContext: Optional[Dict[str, Any]] = Field(default=None, description="Class context profile")
+    preferences: Optional[TeacherPreferences] = Field(default=None, description="Teacher specific preferences")
 
 class QuestionSchema(BaseModel):
     id: str

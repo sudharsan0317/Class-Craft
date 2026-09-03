@@ -3,7 +3,7 @@ from typing import Optional
 import json
 import io
 from pypdf import PdfReader
-from app.schemas.schemas import GenerateResponse
+from app.schemas.schemas import GenerateResponse, TeacherPreferences
 from app.services.ai_engine import ai_engine
 
 router = APIRouter(prefix="/api", tags=["Generation"])
@@ -16,6 +16,7 @@ async def generate_endpoint(
     duration: int = Form(45),
     sourceMaterial: Optional[str] = Form(""),
     classContext: Optional[str] = Form(None), # Passed as JSON string
+    preferences: Optional[str] = Form(None), # Passed as JSON string
     file: Optional[UploadFile] = File(None)
 ):
     try:
@@ -23,34 +24,37 @@ async def generate_endpoint(
         parsed_objectives = json.loads(objectives)
         parsed_class_context = json.loads(classContext) if classContext else None
         
+        prefs_dict = json.loads(preferences) if preferences else {}
+        teacher_prefs = TeacherPreferences(**prefs_dict)
+        
         # 2. Extract file text if uploaded
         file_name = None
         extracted_text = ""
         
         if file and file.filename:
             file_name = file.filename
-            file_bytes = await file.read()
-            
-            # Simple PDF and TXT parsing
-            if file_name.lower().endswith('.pdf'):
-                reader = PdfReader(io.BytesIO(file_bytes))
-                extracted_text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
-            elif file_name.lower().endswith('.txt'):
-                extracted_text = file_bytes.decode("utf-8")
+            if file.filename.endswith(".pdf"):
+                pdf_reader = PdfReader(io.BytesIO(await file.read()))
+                for page in pdf_reader.pages:
+                    extracted_text += page.extract_text() + "\n"
+            else:
+                extracted_text = (await file.read()).decode("utf-8")
                 
-            # Combine the extracted file text with any text they typed in the box
-            if extracted_text:
-                sourceMaterial = f"{sourceMaterial}\n\n[Extracted from uploaded {file_name}]:\n{extracted_text}".strip()
+        # 3. Combine text
+        final_source_material = sourceMaterial
+        if extracted_text:
+            final_source_material += f"\n\n[Content from attached file {file_name}]:\n{extracted_text}"
 
-        # 3. Pass everything into the AI Engine
+        # 4. Trigger AI Generation
         result = await ai_engine.generate_content(
             subject=subject,
             grade_level=gradeLevel,
             objectives=parsed_objectives,
             duration=duration,
-            source_material=sourceMaterial,
+            source_material=final_source_material,
             file_name=file_name,
-            class_context=parsed_class_context
+            class_context=parsed_class_context,
+            preferences=teacher_prefs.model_dump()
         )
         return result
         

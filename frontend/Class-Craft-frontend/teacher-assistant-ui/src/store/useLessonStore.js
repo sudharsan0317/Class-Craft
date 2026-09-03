@@ -48,6 +48,18 @@ export const useLessonStore = create((set, get) => ({
     }),
   logout: () => set({ isAuthenticated: false, user: null, userName: "" }),
 
+  // Teacher Preferences
+  teacherPreferences: {
+    teaching_depth: "Standard",
+    explanation_style: "Balanced",
+    student_readiness: "At Grade Level",
+    assessment_difficulty: "Moderate",
+    include_misconceptions: false
+  },
+  setTeacherPreferences: (newPrefs) => set((state) => ({ 
+    teacherPreferences: { ...state.teacherPreferences, ...newPrefs }
+  })),
+
   // Active Tool / View State ('home' | 'tools' | 'resource' | 'class' | 'class_detail' | 'support' | 'settings' | 'manage_account')
   activeTool: 'home',
   setActiveTool: (activeTool) => set({ activeTool }),

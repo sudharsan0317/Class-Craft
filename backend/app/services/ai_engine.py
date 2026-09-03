@@ -21,10 +21,11 @@ class AIEngine:
         duration: int = 45,
         source_material: str = None,
         file_name: str = None,
-        class_context: dict = None
+        class_context: dict = None,
+        preferences: dict = None
     ) -> Dict[str, Any]:
         """
-        Generates a structured lesson plan using Groq's llama-3.3-70b-versatile.
+        Generates a structured lesson plan using Groq's openai/gpt-oss-20b.
         """
         if not self.client:
             raise ValueError("CRITICAL: GROQ_API_KEY is missing from backend .env file. Real generation aborted.")
@@ -37,6 +38,17 @@ class AIEngine:
         Target Duration: {duration} minutes
         """
         
+        if preferences:
+            prompt += f"""
+            
+        Teacher Preferences to incorporate:
+        - Teaching Depth: {preferences.get('teaching_depth', 'Standard')}
+        - Explanation Style: {preferences.get('explanation_style', 'Balanced')}
+        - Student Readiness: {preferences.get('student_readiness', 'At Grade Level')}
+        - Assessment Difficulty: {preferences.get('assessment_difficulty', 'Moderate')}
+        - Include Misconceptions Section: {'Yes' if preferences.get('include_misconceptions') else 'No'}
+        """
+            
         if source_material:
             prompt += f"\n\nSource Material to base the lesson on:\n{source_material}"
             

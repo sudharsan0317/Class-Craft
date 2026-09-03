@@ -28,6 +28,7 @@ export default function TeacherInputForm({ onGenerateSuccess }) {
   const generatorForm = useLessonStore((state) => state.generatorForm);
   const setGeneratorForm = useLessonStore((state) => state.setGeneratorForm);
   const setLessonData = useLessonStore((state) => state.setLessonData);
+  const teacherPreferences = useLessonStore((state) => state.teacherPreferences);
   const isLoading = useLessonStore((state) => state.isLoading);
   const setIsLoading = useLessonStore((state) => state.setIsLoading);
   const setErrorInStore = useLessonStore((state) => state.setError);
@@ -87,6 +88,9 @@ export default function TeacherInputForm({ onGenerateSuccess }) {
       }
       if (classContext) {
         payload.append('classContext', JSON.stringify(classContext));
+      }
+      if (teacherPreferences) {
+        payload.append('preferences', JSON.stringify(teacherPreferences));
       }
       if (generatorForm.file) {
         payload.append('file', generatorForm.file);
